@@ -108,19 +108,12 @@ class StashRestApiImpl implements StashRestApi {
     }
 
     @Override
-    Map postPullRequest(fromBranch, toBranch, title, description)
+    Map postPullRequest(fromBranch, toRepo, toBranch, title, description)
     {
         fromBranch = fromBranch.trim()
         toBranch = toBranch.trim()
 
         def path = getRestPath() + "pull-requests/"
-        def repositoryMap = [
-                slug: stashRepo,
-                name: null,
-                project: [
-                        key: stashProject
-                ]
-        ]
         def body = [
                 title: title,
                 description: description,
@@ -129,11 +122,23 @@ class StashRestApiImpl implements StashRestApi {
                 closed : false,
                 fromRef: [
                         id: "refs/heads/$fromBranch",
-                        repository: repositoryMap
+                        repository: [
+                                slug: stashRepo,
+                                name: null,
+                                project: [
+                                        key: stashProject
+                                ]
+                        ]
                 ],
                 toRef: [
                         id: "refs/heads/$toBranch",
-                        repository: repositoryMap
+                        repository: [
+                                slug: stashRepo,
+                                name: null,
+                                project: [
+                                        key: stashProject
+                                ]
+                        ]
                 ],
                 reviewers: []
         ]
@@ -156,7 +161,7 @@ class StashRestApiImpl implements StashRestApi {
         return stashPostJson(path, [:],[version: pullRequest.version])
     }
 
-    @Override
+    //@Override
     List<Map> getBranchInfo(String object = null) throws Exception {
         String path = getBranchUtilsRestPath() + "branches/info"
         def branches = []
